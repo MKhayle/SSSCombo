@@ -1,0 +1,12 @@
+{
+    "Author": "Khayle",
+    "Name": "SSS Combo",
+    "Punchline": "Enables a Devil May Cry-like combo counter to highlight your current battle performance.",
+    "Description": "Enables a Devil May Cry-like combo counter to highlight your current battle performance. Use /ssscombo to open the settings.",
+    "ApplicableVersion": "any",
+    "Tags": [
+        "dmc",
+        "devil may cry",
+        "combo"
+    ]
+}

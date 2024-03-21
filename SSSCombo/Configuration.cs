@@ -1,4 +1,4 @@
-﻿using Dalamud.Configuration;
+using Dalamud.Configuration;
 using Dalamud.Plugin;
 using System;
 
@@ -7,9 +7,11 @@ namespace SamplePlugin
     [Serializable]
     public class Configuration : IPluginConfiguration
     {
-        public int Version { get; set; } = 0;
+        public int Version { get; set; } = 1;
 
-        public bool SomePropertyToBeSavedAndWithADefault { get; set; } = true;
+        public bool Enabled { get; set; } = true;
+        public bool Clickthrough { set; get; } = false;
+        public bool Full { set; get; } = false;
 
         // the below exist just to make saving less cumbersome
         [NonSerialized]
