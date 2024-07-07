@@ -12,7 +12,7 @@ namespace SSSCombo
         public bool Enabled { get; set; } = true;
         public bool Draggable { set; get; } = false;
         public bool Full { set; get; } = false;
-
+        public bool Demo { set; get; } = true;
         public int ComboDifficulty { set; get; } = 1;
 
         // the below exist just to make saving less cumbersome

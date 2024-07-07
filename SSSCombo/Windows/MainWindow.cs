@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using Dalamud.Game.ClientState.Objects.Enums;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
@@ -30,8 +32,19 @@ public class MainWindow : Window, IDisposable
         FullImage = null;
     }
 
+    public override bool DrawConditions()
+    {
+        if (Plugin.Configuration is { Demo: true }) return true;
+        if (Plugin.Configuration is { Enabled: true }) return true;
+        if (!Services.DutyState.IsDutyStarted) return false;
+        if (Services.ClientState.LocalPlayer is { IsDead: true }) return false;
+
+        return true;
+    }
+
     public override void Draw()
     {
+        Plugin.DrawMainUI();
         if (!this.Plugin.Configuration.Full)
         {
             this.SizeConstraints = new WindowSizeConstraints
@@ -60,18 +73,11 @@ public class MainWindow : Window, IDisposable
             this.AllowClickthrough = false;
         }
 
-        if (this.Plugin.Configuration.Enabled)
-        {
-            ImGui.Text($"current vuln timer: {Plugin.currentVulnTimer}");
-            ImGui.Text($"Dead ? {Plugin.Dead.ToString()}");
-            ImGui.Text($"current rank:{Plugin.SSSCounter.ToString()}");
-            if(!Plugin.Configuration.Full) ImGui.Image(this.FullImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.FullImage[Plugin.SSSCounter].Width, this.FullImage[Plugin.SSSCounter].Height));
-            else ImGui.Image(this.LetterImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.LetterImage[Plugin.SSSCounter].Width, this.LetterImage[Plugin.SSSCounter].Height));
-        }
-        else
-        {
-
-        }
-
+        ImGui.Text($"current vuln timer: {Plugin.currentVulnTimer}");
+        ImGui.Text($"Dead ? {Plugin.Dead.ToString()}");
+        ImGui.Text($"current rank:{Plugin.SSSCounter.ToString()}");
+        if (!Plugin.Configuration.Full) ImGui.Image(this.FullImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.FullImage[Plugin.SSSCounter].Width, this.FullImage[Plugin.SSSCounter].Height));
+        else ImGui.Image(this.LetterImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.LetterImage[Plugin.SSSCounter].Width, this.LetterImage[Plugin.SSSCounter].Height));
+        
     }
 }

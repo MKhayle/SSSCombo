@@ -11,7 +11,10 @@ namespace SSSCombo
     {
         private void OnceUponAFrame(Object _) 
         {
-            
+            if (Configuration.Enabled == false) MainWindow.IsOpen = false; else MainWindow.IsOpen = true;
+            if (Configuration.Demo == true) { SSSCounter = 8; MainWindow.IsOpen = true; } 
+            else if (SSSCounter == 8) SSSCounter = 0;
+
             var player = Services.ClientState.LocalPlayer;
             if (player == null) return; // Player is not logged in, nothing we can do.
 

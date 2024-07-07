@@ -10,13 +10,15 @@ namespace SSSCombo.Enums
     {
         public enum Ranks
         {
-            D = 0,
-            C = 1,
-            B = 2,
-            A = 3,
-            S = 4,
-            SS = 5,
-            SSS = 6
+            E = 0,
+            D = 1,
+            C = 2,
+            B = 3,
+            A = 4,
+            S = 5,
+            SS = 6,
+            SSS = 7,
+            DEMO = 8
         }
     }
 }

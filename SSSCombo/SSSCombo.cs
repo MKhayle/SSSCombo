@@ -67,10 +67,11 @@ namespace SSSCombo
 
             Services.Framework.Update += OnceUponAFrame;
             Services.PluginInterface.UiBuilder.Draw += DrawUI;
+            Services.PluginInterface.UiBuilder.OpenMainUi += DrawMainUI;
             Services.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
 
             if (Configuration.Enabled) MainWindow.IsOpen = true;
-            else MainWindow.IsOpen = false;
+            //else MainWindow.Toggle();
             
         }
 
@@ -86,7 +87,7 @@ namespace SSSCombo
 
         private void OnCommand(string command, string args)
         {
-            //in response to the slash command, just display our main ui            
+            //in response to the slash command, just display our main ui
 
             if (args == "plus") SSSCounter++;
             else if (args == "reset") SSSCounter = 0;
@@ -102,6 +103,11 @@ namespace SSSCombo
         public void DrawConfigUI()
         {
             ConfigWindow.IsOpen = true;
+        }
+
+        public void DrawMainUI()
+        {
+            MainWindow.IsOpen = true;
         }
     }
 }
