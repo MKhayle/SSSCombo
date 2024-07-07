@@ -4,72 +4,91 @@ using Dalamud.Plugin;
 using System.IO;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
-using SamplePlugin.Windows;
+using SSSCombo.Windows;
 using ImGuiNET;
+using SSSCombo.Enums;
+using System;
+using static FFXIVClientStructs.FFXIV.Common.Component.BGCollision.MeshPCB;
+using System.Collections.Generic;
+using Dalamud.Interface.Textures.TextureWraps;
 
-namespace SamplePlugin
+namespace SSSCombo
 {
     public sealed class Plugin : IDalamudPlugin
     {
         public string Name => "SSS Combo";
         private const string CommandName = "/ssscombo";
+        public int SSSCounter = 0;
+        public List<IDalamudTextureWrap> fullPictures = new();
+        public List<IDalamudTextureWrap> letterPictures = new();
 
-        private DalamudPluginInterface PluginInterface { get; init; }
-        private ICommandManager CommandManager { get; init; }
+        [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
+        [PluginService] internal static ITextureProvider TextureProvider { get; private set; } = null!;
+        [PluginService] internal static ICommandManager CommandManager { get; private set; } = null!;
         public Configuration Configuration { get; init; }
+
         public WindowSystem WindowSystem = new("SSSCombo");
 
         private ConfigWindow ConfigWindow { get; init; }
         private MainWindow MainWindow { get; init; }
 
         public Plugin(
-            [RequiredVersion("1.0")] DalamudPluginInterface pluginInterface,
-            [RequiredVersion("1.0")] ICommandManager commandManager)
+            IDalamudPluginInterface pluginInterface,
+            ICommandManager commandManager)
         {
-            this.PluginInterface = pluginInterface;
-            this.CommandManager = commandManager;
+            Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
-            this.Configuration = this.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            this.Configuration.Initialize(this.PluginInterface);
+            this.Configuration.Initialize(PluginInterface);
 
             // you might normally want to embed resources and load them from the manifest stream
-            var imagePath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "letters/SSS.png");
-            var letterImage = this.PluginInterface.UiBuilder.LoadImage(imagePath); 
-            var fullPath = Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, "full/SSS.png");
-            var fullImage = this.PluginInterface.UiBuilder.LoadImage(fullPath);
+            foreach (var name in Enum.GetNames<Styles.Ranks>())
+            {
+
+                var fullPath = File.ReadAllBytes(Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, $"full/{name}.png"));
+                var fullImage = TextureProvider.CreateFromImageAsync(fullPath);
+                fullPictures.Add(fullImage.Result);
+
+                var imagePath = File.ReadAllBytes(Path.Combine(PluginInterface.AssemblyLocation.Directory?.FullName!, $"letters/{name}.png"));
+                var letterImage = TextureProvider.CreateFromImageAsync(imagePath);
+                letterPictures.Add(letterImage.Result);
+            }
 
             ConfigWindow = new ConfigWindow(this);
-            MainWindow = new MainWindow(this, letterImage, fullImage);
+            MainWindow = new MainWindow(this, fullPictures, letterPictures);
             
             WindowSystem.AddWindow(ConfigWindow);
             WindowSystem.AddWindow(MainWindow);
 
-            this.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
+            CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
             {
                 HelpMessage = "Opens the settings for the SSS Combo plugin."
             });
 
-            this.PluginInterface.UiBuilder.Draw += DrawUI;
-            this.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+            PluginInterface.UiBuilder.Draw += DrawUI;
+            PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
 
-            if(this.Configuration.Enabled) MainWindow.IsOpen = true;
+            if(Configuration.Enabled) MainWindow.IsOpen = true;
             
         }
 
         public void Dispose()
         {
-            this.WindowSystem.RemoveAllWindows();
+            WindowSystem.RemoveAllWindows();
             
             ConfigWindow.Dispose();
             MainWindow.Dispose();
             
-            this.CommandManager.RemoveHandler(CommandName);
+            CommandManager.RemoveHandler(CommandName);
         }
 
         private void OnCommand(string command, string args)
         {
             //in response to the slash command, just display our main ui
             ConfigWindow.IsOpen = true;
+
+            if (args == "plus") SSSCounter++;
+            if (args == "reset") SSSCounter = 0;
+            if (args == "minus") SSSCounter--;
         }
 
         private void DrawUI()

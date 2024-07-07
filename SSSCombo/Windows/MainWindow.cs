@@ -1,18 +1,20 @@
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using Dalamud.Interface.Internal;
+using Dalamud.Interface.Textures.TextureWraps;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
 
-namespace SamplePlugin.Windows;
+namespace SSSCombo.Windows;
 
 public class MainWindow : Window, IDisposable
 {
-    private IDalamudTextureWrap LetterImage;
-    private IDalamudTextureWrap FullImage;
+    private List<IDalamudTextureWrap> LetterImage;
+    private List<IDalamudTextureWrap> FullImage;
     private Plugin Plugin;
 
-    public MainWindow(Plugin plugin, IDalamudTextureWrap letterImage, IDalamudTextureWrap fullImage) : base(
+    public MainWindow(Plugin plugin, List<IDalamudTextureWrap> letterImage, List<IDalamudTextureWrap> fullImage) : base(
         "SSSCombo counter", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize
         //| ImGuiWindowFlags.NoMouseInputs | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoTitleBar  
         )
@@ -27,7 +29,8 @@ public class MainWindow : Window, IDisposable
 
     public void Dispose()
     {
-        this.LetterImage.Dispose();
+        //LetterImage.Dispose();
+        //FullImage.Dispose();
     }
 
     public override void Draw()
@@ -62,9 +65,9 @@ public class MainWindow : Window, IDisposable
 
         if (this.Plugin.Configuration.Enabled)
         {
-            //ImGui.Text("current rank:");
-            if(Plugin.Configuration.Full) ImGui.Image(this.FullImage.ImGuiHandle, new Vector2(this.FullImage.Width, this.FullImage.Height));
-            else ImGui.Image(this.LetterImage.ImGuiHandle, new Vector2(this.LetterImage.Width, this.LetterImage.Height));
+            ImGui.Text($"current rank:{Plugin.SSSCounter.ToString()}");
+            if(Plugin.Configuration.Full) ImGui.Image(this.FullImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.FullImage[Plugin.SSSCounter].Width, this.FullImage[Plugin.SSSCounter].Height));
+            else ImGui.Image(this.LetterImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.LetterImage[Plugin.SSSCounter].Width, this.LetterImage[Plugin.SSSCounter].Height));
         }
 
     }
