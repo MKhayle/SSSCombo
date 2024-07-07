@@ -9,7 +9,7 @@ public class ConfigWindow : Window, IDisposable
 {
     private Configuration Configuration;
 
-    public ConfigWindow(Plugin plugin) : base(
+    public ConfigWindow(SSSCombo plugin) : base(
         "SSS Combo Config",
         ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar |
         ImGuiWindowFlags.NoScrollWithMouse)
@@ -26,7 +26,7 @@ public class ConfigWindow : Window, IDisposable
     {
         // can't ref a property, so use a local copy
         var enabledValue = this.Configuration.Enabled;
-        var clickthroughValue = this.Configuration.Clickthrough;
+        var draggableValue = this.Configuration.Draggable;
         var fullValue = this.Configuration.Full;
         if (ImGui.Checkbox("Enabled", ref enabledValue))
         {
@@ -34,9 +34,9 @@ public class ConfigWindow : Window, IDisposable
             // can save immediately on change, if you don't want to provide a "Save and Close" button
             this.Configuration.Save();
         }
-        if (ImGui.Checkbox("Clickthrough", ref clickthroughValue))
+        if (ImGui.Checkbox("Draggable", ref draggableValue))
         {
-            this.Configuration.Clickthrough = clickthroughValue;
+            this.Configuration.Draggable = draggableValue;
             // can save immediately on change, if you don't want to provide a "Save and Close" button
             this.Configuration.Save();
         }
@@ -45,6 +45,19 @@ public class ConfigWindow : Window, IDisposable
             this.Configuration.Full = fullValue;
             // can save immediately on change, if you don't want to provide a "Save and Close" button
             this.Configuration.Save();
+        }
+
+        if (ImGui.BeginCombo("##combo", this.Configuration.ComboDifficulty.ToString())) // The second parameter is the label previewed before opening the combo.
+        {
+            foreach (var diff in Enums.ComboDifficulties.ToList())
+            {
+                bool is_selected = (current_item == items[n]); // You can store your selection however you want, outside or inside your objects
+                if (ImGui.Selectable(items[n], is_selected)
+                    current_item = items[n];
+                if (is_selected)
+                    ImGui.SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+            }
+            ImGui.EndCombo();
         }
     }
 }

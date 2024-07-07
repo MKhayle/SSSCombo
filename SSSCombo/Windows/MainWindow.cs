@@ -10,11 +10,11 @@ namespace SSSCombo.Windows;
 
 public class MainWindow : Window, IDisposable
 {
-    private List<IDalamudTextureWrap> LetterImage;
-    private List<IDalamudTextureWrap> FullImage;
-    private Plugin Plugin;
+    private List<IDalamudTextureWrap>? LetterImage;
+    private List<IDalamudTextureWrap>? FullImage;
+    private SSSCombo Plugin;
 
-    public MainWindow(Plugin plugin, List<IDalamudTextureWrap> letterImage, List<IDalamudTextureWrap> fullImage) : base(
+    public MainWindow(SSSCombo plugin, List<IDalamudTextureWrap> letterImage, List<IDalamudTextureWrap> fullImage) : base(
         "SSSCombo counter", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize
         //| ImGuiWindowFlags.NoMouseInputs | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoTitleBar  
         )
@@ -22,15 +22,12 @@ public class MainWindow : Window, IDisposable
         this.Plugin = plugin;
         this.LetterImage = letterImage;
         this.FullImage = fullImage;
-
-       
-
     }
 
     public void Dispose()
     {
-        //LetterImage.Dispose();
-        //FullImage.Dispose();
+        LetterImage = null;
+        FullImage = null;
     }
 
     public override void Draw()
@@ -52,7 +49,7 @@ public class MainWindow : Window, IDisposable
             };
         }
 
-        if (this.Plugin.Configuration.Clickthrough)
+        if (!this.Plugin.Configuration.Draggable)
         {
             this.Flags = ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoMouseInputs | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.AlwaysAutoResize;
             this.AllowClickthrough = true;
@@ -65,9 +62,15 @@ public class MainWindow : Window, IDisposable
 
         if (this.Plugin.Configuration.Enabled)
         {
+            ImGui.Text($"current vuln timer: {Plugin.currentVulnTimer}");
+            ImGui.Text($"Dead ? {Plugin.Dead.ToString()}");
             ImGui.Text($"current rank:{Plugin.SSSCounter.ToString()}");
-            if(Plugin.Configuration.Full) ImGui.Image(this.FullImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.FullImage[Plugin.SSSCounter].Width, this.FullImage[Plugin.SSSCounter].Height));
+            if(!Plugin.Configuration.Full) ImGui.Image(this.FullImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.FullImage[Plugin.SSSCounter].Width, this.FullImage[Plugin.SSSCounter].Height));
             else ImGui.Image(this.LetterImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.LetterImage[Plugin.SSSCounter].Width, this.LetterImage[Plugin.SSSCounter].Height));
+        }
+        else
+        {
+
         }
 
     }
