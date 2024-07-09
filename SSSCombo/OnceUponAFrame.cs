@@ -58,11 +58,15 @@ namespace SSSCombo
                 }
             }
 
+            // RankDown();
+            // RankUp();
+            // RankReset();
+            // https://github.com/goatcorp/Dalamud/blob/d41682b66e0da3eea80d40722a201a3fc2649303/Dalamud/Interface/Internal/Windows/ComponentDemoWindow.cs#L121
             //Random random = new Random();
             //SSSCounter = random.Next(6);
-         
 
-            
+
+
         }
     }
 }

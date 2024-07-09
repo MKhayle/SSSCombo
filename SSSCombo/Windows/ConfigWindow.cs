@@ -77,7 +77,7 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.Separator();
                 ImGui.BulletText("You will combo up by using your GCDs without drifting too much.");
                 ImGui.SameLine();
-                ImGuiComponents.HelpMarker("\"Drifting\" is when you delay your Global Cooldown between two weaponskills or spells.\nTry pressing your buttons faster for better combos!.");
+                ImGuiComponents.HelpMarker("\"Drifting\" is when you delay your Global Cooldown between two weaponskills or spells.\nTry pressing your buttons faster for better combos!");
                 ImGui.BulletText("You will combo down when you're being hit by a Vulnerability debuff.");
                 ImGui.BulletText("Upon dying, your c-c-c-c-combo breaks & resets. Don't die!");
                 ImGui.Text("");
@@ -96,7 +96,7 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.Separator();
                 ImGui.BulletText("You will combo up by using your GCDs without drifting excessively.");
                 ImGui.SameLine();
-                ImGuiComponents.HelpMarker("\"Drifting\" is when you delay your Global Cooldown between two weaponskills or spells.\nTry pressing your buttons faster for better combos!.");
+                ImGuiComponents.HelpMarker("\"Drifting\" is when you delay your Global Cooldown between two weaponskills or spells.\nTry pressing your buttons faster for better combos!");
                 ImGui.BulletText("You will combo down when drifting or being hit by a Vulnerability debuff.");
                 ImGui.BulletText("Upon dying, your c-c-c-c-combo breaks & resets. Don't die!");
                 ImGui.Text("");
@@ -115,7 +115,7 @@ public class ConfigWindow : Window, IDisposable
                 ImGui.Separator();
                 ImGui.BulletText("You will combo up by using your GCDs without drifting.");
                 ImGui.SameLine();
-                ImGuiComponents.HelpMarker("\"Drifting\" is when you delay your Global Cooldown between two weaponskills or spells.\nTry pressing your buttons faster for better combos!.");
+                ImGuiComponents.HelpMarker("\"Drifting\" is when you delay your Global Cooldown between two weaponskills or spells.\nTry pressing your buttons faster for better combos!");
                 ImGui.BulletText("You will combo down when drifting or being hit by a Vulnerability debuff.");
                 ImGui.BulletText("Upon dying, your c-c-c-c-combo breaks & resets. Don't die!");
                 ImGui.Text("");
