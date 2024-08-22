@@ -14,8 +14,8 @@ namespace SSSCombo
         [PluginService] internal static IFramework Framework { get; private set; } = null!; 
         [PluginService] internal static IGameInteropProvider GameInteropProvider { get; private set; } = null!;
         [PluginService] internal static ITextureProvider TextureProvider { get; private set; } = null!;
-        [PluginService] internal static IClientState ClientState { get; private set; }
-        [PluginService] internal static IDataManager Data { get; private set; }
+        [PluginService] internal static IClientState? ClientState { get; private set; }
+        [PluginService] internal static IDataManager? Data { get; private set; }
         [PluginService] internal static IBuddyList BuddyList { get; private set; } = null!; 
         [PluginService] internal static ITargetManager TargetManager { get; private set; } = null!;
         [PluginService] internal static ICondition Condition { get; private set; } = null!;

@@ -73,9 +73,10 @@ public class MainWindow : Window, IDisposable
             this.AllowClickthrough = false;
         }
 
-        ImGui.Text($"current vuln timer: {Plugin.currentVulnTimer}");
+        ImGui.Text($"current vuln timer: {Plugin.CurrentVulnTimer}");
         ImGui.Text($"Dead? {Plugin.Dead.ToString()}");
         ImGui.Text($"current rank: {Plugin.SSSCounter.ToString()}");
+        
         if (!Plugin.Configuration.Full) ImGui.Image(this.FullImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.FullImage[Plugin.SSSCounter].Width, this.FullImage[Plugin.SSSCounter].Height));
         else ImGui.Image(this.LetterImage[Plugin.SSSCounter].ImGuiHandle, new Vector2(this.LetterImage[Plugin.SSSCounter].Width, this.LetterImage[Plugin.SSSCounter].Height));
         if (Plugin.Configuration.Demo) ImGui.Text("SSSCombo's demo mode is active.");

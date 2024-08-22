@@ -4,15 +4,25 @@ using Dalamud.Game.ClientState.Statuses;
 using Dalamud.Plugin.Services;
 using System.Linq;
 using System;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace SSSCombo
 {
     public unsafe partial class SSSCombo : IDalamudPlugin
     {
+        private DateTime prevGCD = DateTime.Now;
+
+        
         private void OnceUponAFrame(Object _) 
         {
-            if (Configuration.Enabled == false) MainWindow.IsOpen = false; else MainWindow.IsOpen = true;
-            if (Configuration.Demo == true) { SSSCounter = 8; MainWindow.IsOpen = true; } 
+            if (Configuration.Enabled == false) MainWindow.IsOpen = false;
+            else MainWindow.IsOpen = true;
+            
+            if (Configuration.Demo == true)
+            {
+                SSSCounter = 8;
+                MainWindow.IsOpen = true;
+            } 
             else if (SSSCounter == 8) SSSCounter = 0;
 
             var player = Services.ClientState.LocalPlayer;
@@ -31,7 +41,7 @@ namespace SSSCombo
 
             if (Services.ClientState.LocalPlayer.IsDead)
             {
-                SSSCounter = 0;
+                RankDown(SSSCounter, 7);
                 Dead = true;
             }
             else
@@ -44,29 +54,48 @@ namespace SSSCombo
                 if (vulnIcons.Contains(item.GameData.Icon))
                 {
                     Services.Log.Verbose($"Statut {item.StatusId} / Icon : {item.GameData.Icon.ToString()}");
-                    currentVulnTimer = item.RemainingTime;
+                    CurrentVulnTimer = item.RemainingTime;
 
-                    if (currentVulnTimer > vulnTimer)
+                    if (CurrentVulnTimer >= VulnTimer)
                     {
-                        vulnTimer = currentVulnTimer;
-                        SSSCounter -= 1;
+                        VulnTimer = CurrentVulnTimer;
+                        RankDown(SSSCounter,1);
                     }
                 }
                 else
                 {
-                    currentVulnTimer = 0;
+                    CurrentVulnTimer = 0;
                 }
             }
 
-            // RankDown();
-            // RankUp();
-            // RankReset();
+
             // https://github.com/goatcorp/Dalamud/blob/d41682b66e0da3eea80d40722a201a3fc2649303/Dalamud/Interface/Internal/Windows/ComponentDemoWindow.cs#L121
             //Random random = new Random();
             //SSSCounter = random.Next(6);
 
+        }
 
-
+        
+        private bool RankDown(int rank, int drop)
+        {
+            //TODO: Fun animations/sounds/voice/shake etc
+            if (rank > 0) rank -= drop;
+            if (rank < 0) rank = 0;
+            
+            return true;
+        }
+        private bool RankUp(int rank, int gain)
+        {
+            //TODO: Fun animations/sounds/voice/shake etc
+            if (rank < 8) rank += gain;
+            if (rank > 7) rank = 7;
+            return true;
+        }
+        
+        private bool RankReset(int rank)
+        {
+            rank = 0;
+            return true;
         }
     }
 }

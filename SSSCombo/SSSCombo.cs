@@ -10,6 +10,7 @@ using SSSCombo.Enums;
 using System;
 using static FFXIVClientStructs.FFXIV.Common.Component.BGCollision.MeshPCB;
 using System.Collections.Generic;
+using Dalamud.Hooking;
 using Dalamud.Interface.Textures.TextureWraps;
 
 namespace SSSCombo
@@ -20,11 +21,11 @@ namespace SSSCombo
         private const string CommandName = "/ssscombo";
         public int SSSCounter = 0;
         public bool Dead = false;
-        public float currentVulnTimer = 0;
-        public float vulnTimer = 0;
+        public float CurrentVulnTimer = 0;
+        public float VulnTimer = 0;
         public string ComboTimer = "0";
-        public List<IDalamudTextureWrap> fullPictures = new();
-        public List<IDalamudTextureWrap> letterPictures = new();
+        public List<IDalamudTextureWrap> FullPictures = new();
+        public List<IDalamudTextureWrap> LetterPictures = new();
         public Configuration Configuration { get; init; }
 
         public WindowSystem WindowSystem = new("SSSCombo");
@@ -32,6 +33,12 @@ namespace SSSCombo
         private ConfigWindow ConfigWindow { get; init; }
         private MainWindow MainWindow { get; init; }
 
+        private delegate void OnActionUsedDelegate(uint sourceId, IntPtr sourceCharacter, IntPtr pos, IntPtr effectHeader, IntPtr effectArray, IntPtr effectTrail);
+        private Hook<OnActionUsedDelegate>? _onActionUsedHook;
+        
+        private delegate void OnCastDelegate(uint sourceId, IntPtr sourceCharacter);
+        private Hook<OnCastDelegate>? _onCastHook;
+        
         public SSSCombo(
             IDalamudPluginInterface pluginInterface,
             ICommandManager commandManager)
@@ -41,21 +48,34 @@ namespace SSSCombo
 
             this.Configuration.Initialize(Services.PluginInterface);
 
-            // you might normally want to embed resources and load them from the manifest stream
+            
+            //Stolen from https://github.com/Zeffuro/ZDs
+            _onActionUsedHook = Services.GameInteropProvider.HookFromSignature<OnActionUsedDelegate>(
+                "40 ?? 56 57 41 ?? 41 ?? 41 ?? 48 ?? ?? ?? ?? ?? ?? ?? 48",
+                OnActionUsed
+            );
+            _onActionUsedHook?.Enable();
+            
+            _onCastHook = Services.GameInteropProvider.HookFromSignature<OnCastDelegate>(
+                "40 56 41 56 48 81 EC ?? ?? ?? ?? 48 8B F2",
+                OnCast
+            );
+            _onCastHook?.Enable();
+            
             foreach (var name in Enum.GetNames<Styles.Ranks>())
             {
 
                 var fullPath = File.ReadAllBytes(Path.Combine(Services.PluginInterface.AssemblyLocation.Directory?.FullName!, $"full/{name}.png"));
                 var fullImage = Services.TextureProvider.CreateFromImageAsync(fullPath);
-                fullPictures.Add(fullImage.Result);
+                FullPictures.Add(fullImage.Result);
 
                 var imagePath = File.ReadAllBytes(Path.Combine(Services.PluginInterface.AssemblyLocation.Directory?.FullName!, $"letters/{name}.png"));
                 var letterImage = Services.TextureProvider.CreateFromImageAsync(imagePath);
-                letterPictures.Add(letterImage.Result);
+                LetterPictures.Add(letterImage.Result);
             }
 
             ConfigWindow = new ConfigWindow(this);
-            MainWindow = new MainWindow(this, fullPictures, letterPictures);
+            MainWindow = new MainWindow(this, FullPictures, LetterPictures);
             
             WindowSystem.AddWindow(ConfigWindow);
             WindowSystem.AddWindow(MainWindow);
@@ -82,6 +102,9 @@ namespace SSSCombo
             ConfigWindow.Dispose();
             MainWindow.Dispose();
             Services.Framework.Update -= this.OnceUponAFrame;
+            Services.PluginInterface.UiBuilder.Draw -= DrawUI;
+            Services.PluginInterface.UiBuilder.OpenMainUi -= DrawMainUI;
+            Services.PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
             Services.CommandManager.RemoveHandler(CommandName);
         }
 
